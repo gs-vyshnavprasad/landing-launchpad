@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffffff">
-  <title>Countdown to 3 PM | Gritstone Technologies</title>
+  <title>Countdown to 4 PM | Gritstone Technologies</title>
   <style>
     :root {
       color-scheme: light;
@@ -197,23 +197,23 @@
   <main>
     <section class="countdown-panel" aria-labelledby="countdown-heading">
       <p class="eyebrow">Valuing every moment</p>
-      <h1 id="countdown-heading">See you at <span>3 PM</span></h1>
+      <h1 id="countdown-heading">See you at <span>4 PM</span></h1>
       <p class="description">A little time left until we take you to Gritstone Technologies.</p>
 
-      <div class="timer" aria-label="Time remaining until 3 PM">
+      <div class="timer" aria-label="Time remaining until 4 PM">
         <div class="time-unit"><span class="value" id="hours">00</span><span class="label">Hours</span></div>
         <div class="time-unit"><span class="value" id="minutes">00</span><span class="label">Minutes</span></div>
         <div class="time-unit"><span class="value" id="seconds">00</span><span class="label">Seconds</span></div>
-        <div class="time-unit"><span class="value" id="milliseconds">000</span><span class="label">Milliseconds</span></div>
+        <div class="time-unit"><span class="value" id="milliseconds">0</span><span class="label">Milliseconds</span></div>
       </div>
-      <p class="status" id="status" role="status">Counting down to 3:00 PM local time.</p>
+      <p class="status" id="status" role="status">Counting down to 4:00 PM local time.</p>
     </section>
   </main>
   <footer>Gritstone Technologies</footer>
 
   <script>
     const redirectUrl = "https://gritstone.com/";
-    const endTime = getNextThreePm();
+    const endTime = getNextFourPm();
 
     const hoursElement = document.getElementById("hours");
     const minutesElement = document.getElementById("minutes");
@@ -221,10 +221,10 @@
     const millisecondsElement = document.getElementById("milliseconds");
     const statusElement = document.getElementById("status");
 
-    function getNextThreePm() {
+    function getNextFourPm() {
       const now = new Date();
       const target = new Date(now);
-      target.setHours(15, 0, 0, 0);
+      target.setHours(16, 0, 0, 0);
 
       if (target <= now) {
         target.setDate(target.getDate() + 1);
@@ -238,7 +238,7 @@
 
       if (remaining <= 0) {
         clearInterval(countdownInterval);
-        statusElement.textContent = "It’s 3 PM. Opening Gritstone…";
+        statusElement.textContent = "It’s 4 PM. Opening Gritstone…";
         window.location.href = redirectUrl;
         return;
       }
@@ -252,14 +252,14 @@
       hoursElement.textContent = String(hours).padStart(2, "0");
       minutesElement.textContent = String(minutes).padStart(2, "0");
       secondsElement.textContent = String(seconds).padStart(2, "0");
-      millisecondsElement.textContent = String(milliseconds).padStart(3, "0");
+      millisecondsElement.textContent = String(Math.floor(milliseconds / 100));
     }
 
-    // Auto-refresh every 20 minutes, anchored so the last refresh of the day is 3:50 PM.
-    // Counting back from 15:50 in 20-minute steps gives :10, :30 and :50 of every hour,
-    // from 00:10 through 15:50. No refreshes happen between 15:50 and 00:10.
+    // Auto-refresh every 20 minutes, anchored so the last refresh of the day is 4:50 PM.
+    // Counting back from 16:50 in 20-minute steps gives :10, :30 and :50 of every hour,
+    // from 00:10 through 16:50. No refreshes happen between 16:50 and 00:10.
     const REFRESH_STEP_MINUTES = 20;
-    const LAST_REFRESH_MINUTES = 15 * 60 + 50; // 3:50 PM
+    const LAST_REFRESH_MINUTES = 16 * 60 + 50; // 4:50 PM
     const nextRefreshTime = getNextRefreshTime();
 
     function getNextRefreshTime() {
