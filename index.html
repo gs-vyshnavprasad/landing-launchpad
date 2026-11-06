@@ -340,11 +340,14 @@
     /* 3-second progress bar shown while the iframe is hard-refreshed. */
     .load-progress {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       z-index: 11;
-      height: 4px;
+      width: min(360px, calc(100% - 32px));
+      height: 6px;
+      border-radius: 999px;
+      overflow: hidden;
       background: rgb(178 13 36 / 15%);
       opacity: 0;
       pointer-events: none;
@@ -353,9 +356,27 @@
 
     .load-progress span {
       display: block;
-      width: 0;
+      width: 35%;
       height: 100%;
+      border-radius: inherit;
       background: var(--gritstone-red);
+    }
+
+    /* While the iframe loads: a segment sweeps across (no fake percentage). */
+    body.reloading .load-progress span {
+      animation: progress-sweep 1100ms cubic-bezier(.45, 0, .55, 1) infinite;
+    }
+
+    /* On the iframe's load event: fill to 100%, then the bar fades out. */
+    body.loaded .load-progress span {
+      animation: none;
+      width: 100%;
+      transition: width 300ms ease-out;
+    }
+
+    @keyframes progress-sweep {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(290%); }
     }
 
     body.reloading .load-progress {
@@ -398,7 +419,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      background: rgb(255 255 255 / 40%);
+      background: rgb(255 255 255 / 60%);
       opacity: 0;
       pointer-events: none;
       transition: opacity 300ms ease;
@@ -409,13 +430,6 @@
       pointer-events: auto;
     }
 
-    body.reloading .load-progress span {
-      animation: progress-fill 3000ms linear forwards;
-    }
-
-    @keyframes progress-fill {
-      to { width: 100%; }
-    }
 
     @media (prefers-reduced-motion: reduce) {
       .countdown-panel,
@@ -625,7 +639,7 @@
     // the same instant for every visitor. All schedule math is done on the IST clock.
     const IST_OFFSET_MINUTES = 5 * 60 + 30;
     const LAUNCH_DATE_IST = "2026-11-06"; // YYYY-MM-DD, India date of the relaunch
-    const LAUNCH_MINUTES_IST = 16 * 60;
+    const LAUNCH_MINUTES_IST = 15 * 34;
     const MINUTE_MS = 60000;
     const DAY_MINUTES = 24 * 60;
 
@@ -714,9 +728,12 @@
     // ---- New site reveal ---------------------------------------------------------------
     // No redirect: the new landing page is preloaded in a hidden iframe. At launch the
     // countdown page scrolls up while the iframe fades in, then the iframe is hard-refreshed
-    // (cache-busted URL) behind a 3-second progress bar so visitors see the freshest build.
+    // (cache-busted URL) behind a progress bar so visitors see the freshest build. A
+    // cross-origin iframe exposes no progress or paint timing, only its load event, so the
+    // bar sweeps while loading and fills to 100% exactly when the iframe finishes.
     const REVEAL_MS = 1200;
-    const RELOAD_PROGRESS_MS = 3000;
+    const PROGRESS_FILL_MS = 300;
+    const PROGRESS_MAX_MS = 10000; // never show the progress bar longer than this
     const siteLayer = document.getElementById("site-layer");
     const siteFrame = document.getElementById("site-frame");
     siteFrame.src = redirectUrl;
@@ -737,9 +754,20 @@
 
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       setTimeout(() => {
+        document.body.classList.remove("loaded");
         document.body.classList.add("reloading");
+        // Finish on the iframe's load event, or after PROGRESS_MAX_MS at the latest.
+        let finished = false;
+        const finishProgress = () => {
+          if (finished) return;
+          finished = true;
+          clearTimeout(maxTimer);
+          document.body.classList.add("loaded");
+          setTimeout(() => document.body.classList.remove("reloading"), PROGRESS_FILL_MS + 150);
+        };
+        const maxTimer = setTimeout(finishProgress, PROGRESS_MAX_MS);
+        siteFrame.addEventListener("load", finishProgress, { once: true });
         siteFrame.src = cacheBustedUrl();
-        setTimeout(() => document.body.classList.remove("reloading"), RELOAD_PROGRESS_MS);
       }, reduceMotion ? 0 : REVEAL_MS);
     }
 
