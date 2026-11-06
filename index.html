@@ -23,70 +23,104 @@
       box-sizing: border-box;
     }
 
+    html,
     body {
-      min-height: 100vh;
+      height: 100%;
+    }
+
+    body {
+      height: 100vh;
+      height: 100dvh;
       margin: 0;
+      /* Logo + panel are centred together as one group within the viewport. */
       display: flex;
       flex-direction: column;
+      justify-content: center;
+      gap: clamp(16px, 5vh, 48px);
+      padding: clamp(20px, 4vh, 40px) 16px;
+      overflow: hidden;
       background: #fff;
     }
 
+    /* Live background: drifting glows + wandering particles, drawn on a canvas behind everything. */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+    }
+
     .top-accent {
+      z-index: 2;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
       height: 7px;
       background: var(--gritstone-red);
     }
 
     header {
-      width: min(100% - 48px, 1240px);
-      height: 94px;
-      margin: 0 auto;
+      margin-bottom: clamp(14px, 3.5vh, 32px);
       display: flex;
       align-items: center;
+      justify-content: center;
     }
 
     .brand {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
       color: #242326;
       text-decoration: none;
     }
 
     .brand-logo {
       display: block;
-      width: 180px;
+      width: clamp(170px, min(24vw, 28vh), 270px);
       height: auto;
     }
 
     main {
-      flex: 1;
+      flex: 0 1 auto;
+      min-height: 0;
       display: grid;
       place-items: center;
-      padding: 44px 24px 80px;
     }
 
     .countdown-panel {
-      width: min(100%, 840px);
-      padding: clamp(28px, 6vw, 68px);
+      width: min(100%, max(840px, 58vw), 1120px);
+      max-height: 100%;
+      padding: clamp(18px, min(6vw, 6vh), 56px) clamp(16px, 5vw, 64px) clamp(14px, 3vh, 28px);
       text-align: center;
       border: 1px solid #eeedef;
-      border-radius: 4px;
-      background: #fff;
+      border-radius: 12px;
+      background: rgb(255 255 255 / 40%);
       box-shadow: 0 18px 56px rgb(27 24 26 / 6%);
     }
 
     .eyebrow {
-      margin: 0 0 18px;
+      margin: 0 0 clamp(8px, 2vh, 18px);
       color: var(--gritstone-red);
-      font-size: 0.76rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
+      display: inline-block;
+      padding: clamp(5px, 1vh, 8px) clamp(14px, 2.4vh, 22px);
+      border: 1px solid rgb(178 13 36 / 22%);
+      border-radius: 999px;
+      background: rgb(178 13 36 / 6%);
+      font-size: clamp(0.9rem, 2.2vh, 1.15rem);
+      font-weight: 600;
+      letter-spacing: 0.04em;
     }
 
     h1 {
-      margin: 0;
-      font-size: clamp(2.7rem, 8vw, 5.2rem);
+      margin: 0 0 clamp(16px, 5vh, 44px);
+      font-size: clamp(2rem, min(8vw, 10vh), 6.6rem);
       font-weight: 500;
       letter-spacing: -0.065em;
       line-height: 1.04;
@@ -96,14 +130,6 @@
       color: var(--gritstone-red);
     }
 
-    .description {
-      max-width: 470px;
-      margin: 20px auto 42px;
-      color: var(--text-muted);
-      font-size: 1.05rem;
-      line-height: 1.6;
-    }
-
     .timer {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -111,7 +137,7 @@
     }
 
     .time-unit {
-      padding: 22px 8px 18px;
+      padding: clamp(10px, 2.6vh, 24px) 6px clamp(8px, 2.2vh, 20px);
       border: 1px solid #eeedef;
       border-top: 3px solid var(--gritstone-red);
       background: #fcfbfb;
@@ -120,110 +146,406 @@
     .value {
       display: block;
       font-variant-numeric: tabular-nums;
-      font-size: clamp(2rem, 7vw, 3.5rem);
+      font-size: clamp(1.8rem, min(9vw, 10vh), 5.6rem);
       font-weight: 600;
       letter-spacing: -0.04em;
+      line-height: 1.1;
     }
 
     .label {
       display: block;
-      margin-top: 8px;
+      margin-top: clamp(4px, 1vh, 8px);
       color: var(--text-muted);
-      font-size: 0.68rem;
+      font-size: clamp(0.58rem, 1.4vh, 0.72rem);
       font-weight: 700;
       letter-spacing: 0.14em;
       text-transform: uppercase;
     }
 
     .status {
-      min-height: 1.5em;
-      margin: 28px 0 0;
+      margin: clamp(12px, 3.5vh, 30px) 0 0;
       color: var(--text-muted);
-      font-size: 0.86rem;
-    }
-
-    footer {
-      padding: 18px 24px 26px;
-      color: #929095;
-      font-size: 0.75rem;
-      letter-spacing: 0.04em;
-      text-align: center;
+      font-size: clamp(0.74rem, 1.8vh, 0.9rem);
+      line-height: 1.5;
     }
 
     @media (max-width: 420px) {
-      header {
-        height: 78px;
-      }
-
-      .brand-logo {
-        width: 150px;
-      }
-
-      .countdown-panel {
-        padding: 34px 18px;
-      }
-
-      .time-unit {
-        padding: 17px 4px 14px;
-      }
-
       .label {
-        font-size: 0.58rem;
+        letter-spacing: 0.08em;
+      }
+    }
+
+    /* ---- Launch celebration ---------------------------------------------------- */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 4;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .countdown-panel {
+      transition: transform 600ms cubic-bezier(.2, .8, .2, 1), opacity 500ms ease, filter 500ms ease;
+    }
+
+    body.launched .countdown-panel {
+      transform: scale(0.94);
+      opacity: 0;
+      filter: blur(6px);
+    }
+
+    .celebration {
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 400ms ease 250ms, visibility 0s linear 650ms;
+    }
+
+    body.launched .celebration {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 400ms ease 250ms, visibility 0s;
+    }
+
+    .celebration-check {
+      display: block;
+      width: clamp(84px, 16vh, 132px);
+      height: auto;
+      margin: 0 auto clamp(14px, 3vh, 26px);
+      overflow: visible;
+    }
+
+    .celebration-check circle {
+      fill: var(--gritstone-red);
+      transform-box: fill-box;
+      transform-origin: center;
+      transform: scale(0);
+    }
+
+    .celebration-check path {
+      fill: none;
+      stroke: #fff;
+      stroke-width: 7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 60;
+      stroke-dashoffset: 60;
+    }
+
+    .celebration-check .ring {
+      fill: none;
+      stroke: var(--gritstone-red);
+      stroke-width: 2;
+      opacity: 0;
+      transform: scale(1);
+    }
+
+    body.launched .celebration-check circle:not(.ring) {
+      animation: pop-in 520ms cubic-bezier(.2, 1.6, .4, 1) 350ms forwards;
+    }
+
+    body.launched .celebration-check path {
+      animation: draw-check 420ms ease-out 750ms forwards;
+    }
+
+    body.launched .celebration-check .ring {
+      animation: ring-out 1100ms ease-out 650ms forwards;
+    }
+
+    .celebration-title {
+      margin: 0;
+      font-size: clamp(2.4rem, min(9vw, 11vh), 6rem);
+      font-weight: 600;
+      letter-spacing: -0.05em;
+      line-height: 1.05;
+    }
+
+    .celebration-title span {
+      color: var(--gritstone-red);
+    }
+
+    .celebration-sub {
+      margin: clamp(10px, 2.4vh, 20px) 0 0;
+      color: var(--text-muted);
+      font-size: clamp(0.9rem, 2.2vh, 1.15rem);
+    }
+
+    body.launched .celebration-title,
+    body.launched .celebration-sub {
+      animation: rise-in 600ms cubic-bezier(.2, .8, .2, 1) both;
+    }
+
+    body.launched .celebration-title { animation-delay: 650ms; }
+    body.launched .celebration-sub { animation-delay: 850ms; }
+
+    @keyframes pop-in {
+      to { transform: scale(1); }
+    }
+
+    @keyframes draw-check {
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes ring-out {
+      0% { opacity: 0.6; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.8); }
+    }
+
+    @keyframes rise-in {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .countdown-panel,
+      .celebration {
+        transition: none;
+      }
+
+      body.launched .celebration-check circle:not(.ring),
+      body.launched .celebration-check path,
+      body.launched .celebration-title,
+      body.launched .celebration-sub {
+        animation: none;
+        transform: none;
+        stroke-dashoffset: 0;
       }
     }
   </style>
 </head>
 <body>
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
   <div class="top-accent" aria-hidden="true"></div>
-  <header>
-    <a class="brand" href="https://gritstone.com/" aria-label="Gritstone Technologies home">
-      <img class="brand-logo" src="assets/gritstone-logo.svg" alt="Gritstone Technologies" width="234" height="40">
-    </a>
-  </header>
   <main>
     <section class="countdown-panel" aria-labelledby="countdown-heading">
-      <p class="eyebrow">Website relaunch</p>
-      <h1 id="countdown-heading">Our new website launches at <span>4 PM</span></h1>
-      <p class="description">We're relaunching the Gritstone Technologies website. The countdown is on until the new site goes live.</p>
-
-      <div class="timer" aria-label="Time remaining until the website relaunch at 4 PM">
+      <header>
+        <a class="brand" href="https://gritstonetech.com/" aria-label="Gritstone Technologies home">
+          <img class="brand-logo" src="assets/gritstone-logo.svg" alt="Gritstone Technologies" width="234" height="40">
+        </a>
+      </header>
+      <p class="eyebrow">gritstonetech.com</p>
+      <h1 id="countdown-heading">Relaunch in</h1>
+      <div class="timer" aria-label="Time remaining until the website relaunch">
         <div class="time-unit"><span class="value" id="hours">00</span><span class="label">Hours</span></div>
         <div class="time-unit"><span class="value" id="minutes">00</span><span class="label">Minutes</span></div>
         <div class="time-unit"><span class="value" id="seconds">00</span><span class="label">Seconds</span></div>
       </div>
-      <p class="status" id="status" role="status">Counting down to the website relaunch at 4:00 PM local time.</p>
+      <p class="status" id="status" role="status">Counting down to the website relaunch at 4:00 PM IST.</p>
     </section>
   </main>
-  <footer>Gritstone Technologies</footer>
+
+  <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+  <div class="celebration" id="celebration" aria-hidden="true">
+    <div>
+      <svg class="celebration-check" viewBox="0 0 100 100" aria-hidden="true">
+        <circle class="ring" cx="50" cy="50" r="46"></circle>
+        <circle cx="50" cy="50" r="46"></circle>
+        <path d="M30 51 L44 65 L71 37"></path>
+      </svg>
+      <h2 class="celebration-title">We’re <span>live!</span></h2>
+      <p class="celebration-sub">Taking you to gritstonetech.com…</p>
+    </div>
+  </div>
 
   <script>
-    const redirectUrl = "https://gritstone.com/";
-    const endTime = getNextFourPm();
+    // ---- Live background animation -------------------------------------------------
+    // Large soft red glows drift toward random targets; small particles wander with
+    // randomly changing headings and link up with faint lines when close together.
+    (function startBackground() {
+      const canvas = document.getElementById("bg-canvas");
+      const ctx = canvas.getContext("2d");
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const RED = "178, 13, 36";
+      const rand = (min, max) => min + Math.random() * (max - min);
+
+      let width = 0;
+      let height = 0;
+      let glows = [];
+      let particles = [];
+      let frameId = 0;
+      let lastTime = 0;
+
+      function makeGlow() {
+        return {
+          x: rand(0, width), y: rand(0, height),
+          tx: rand(0, width), ty: rand(0, height),
+          r: rand(0.25, 0.45) * Math.max(width, height),
+          alpha: rand(0.05, 0.1),
+          speed: rand(0.00015, 0.0004),
+        };
+      }
+
+      function makeParticle() {
+        return {
+          x: rand(0, width), y: rand(0, height),
+          angle: rand(0, Math.PI * 2),
+          turn: rand(-0.6, 0.6),
+          speed: rand(12, 34),
+          size: rand(1.2, 3.4),
+          alpha: rand(0.18, 0.5),
+        };
+      }
+
+      function resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        const particleCount = Math.min(90, Math.round((width * height) / 16000));
+        glows = Array.from({ length: 5 }, makeGlow);
+        particles = Array.from({ length: particleCount }, makeParticle);
+      }
+
+      function step(dt) {
+        for (const g of glows) {
+          // Ease toward a random target; pick a new one when close.
+          g.x += (g.tx - g.x) * g.speed * dt;
+          g.y += (g.ty - g.y) * g.speed * dt;
+          if (Math.hypot(g.tx - g.x, g.ty - g.y) < 40) {
+            g.tx = rand(0, width);
+            g.ty = rand(0, height);
+          }
+        }
+
+        const seconds = dt / 1000;
+        for (const p of particles) {
+          // Random walk on the heading so every path is different and keeps changing.
+          if (Math.random() < 0.02) p.turn = rand(-0.9, 0.9);
+          p.angle += p.turn * seconds;
+          p.x += Math.cos(p.angle) * p.speed * seconds;
+          p.y += Math.sin(p.angle) * p.speed * seconds;
+
+          // Wrap around the edges.
+          if (p.x < -10) p.x = width + 10;
+          if (p.x > width + 10) p.x = -10;
+          if (p.y < -10) p.y = height + 10;
+          if (p.y > height + 10) p.y = -10;
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (const g of glows) {
+          const gradient = ctx.createRadialGradient(g.x, g.y, 0, g.x, g.y, g.r);
+          gradient.addColorStop(0, `rgba(${RED}, ${g.alpha})`);
+          gradient.addColorStop(1, `rgba(${RED}, 0)`);
+          ctx.fillStyle = gradient;
+          ctx.fillRect(0, 0, width, height);
+        }
+
+        const linkDistance = Math.min(150, Math.max(width, height) * 0.12);
+        ctx.lineWidth = 1;
+        for (let i = 0; i < particles.length; i++) {
+          const a = particles[i];
+          for (let j = i + 1; j < particles.length; j++) {
+            const b = particles[j];
+            const d = Math.hypot(a.x - b.x, a.y - b.y);
+            if (d < linkDistance) {
+              ctx.strokeStyle = `rgba(${RED}, ${0.14 * (1 - d / linkDistance)})`;
+              ctx.beginPath();
+              ctx.moveTo(a.x, a.y);
+              ctx.lineTo(b.x, b.y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        for (const p of particles) {
+          ctx.fillStyle = `rgba(${RED}, ${p.alpha})`;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      function frame(time) {
+        const dt = Math.min(time - (lastTime || time), 50);
+        lastTime = time;
+        step(dt);
+        draw();
+        frameId = requestAnimationFrame(frame);
+      }
+
+      function start() {
+        cancelAnimationFrame(frameId);
+        lastTime = 0;
+        if (reduceMotion.matches) {
+          draw(); // Static snapshot only.
+        } else {
+          frameId = requestAnimationFrame(frame);
+        }
+      }
+
+      resize();
+      start();
+      window.addEventListener("resize", () => { resize(); start(); });
+      reduceMotion.addEventListener?.("change", start);
+    })();
+
+    const redirectUrl = "https://gritstonetech.com/";
+
+    // The relaunch happens at 4:00 PM India Standard Time (UTC+5:30, no daylight saving),
+    // the same instant for every visitor. All schedule math is done on the IST clock.
+    const IST_OFFSET_MINUTES = 5 * 60 + 30;
+    const LAUNCH_DATE_IST = "2026-11-06"; // YYYY-MM-DD, India date of the relaunch
+    const LAUNCH_MINUTES_IST = 14 * 60 
+      + 35;
+    const MINUTE_MS = 60000;
+    const DAY_MINUTES = 24 * 60;
+
+    // Minutes since midnight on the IST clock, and the UTC timestamp of that IST midnight.
+    function istClock(timestamp) {
+      const istMs = timestamp + IST_OFFSET_MINUTES * MINUTE_MS;
+      const msIntoDay = ((istMs % (DAY_MINUTES * MINUTE_MS)) + DAY_MINUTES * MINUTE_MS) % (DAY_MINUTES * MINUTE_MS);
+      return { minutes: msIntoDay / MINUTE_MS, midnightUtc: timestamp - msIntoDay };
+    }
+
+    // Add ?demo to the URL to preview the finish: a 10-second countdown, no redirect.
+    const demoMode = new URLSearchParams(window.location.search).has("demo");
+    const endTime = demoMode ? new Date(Date.now() + 10000) : getNextLaunch();
 
     const hoursElement = document.getElementById("hours");
     const minutesElement = document.getElementById("minutes");
     const secondsElement = document.getElementById("seconds");
     const statusElement = document.getElementById("status");
 
-    function getNextFourPm() {
-      const now = new Date();
-      const target = new Date(now);
-      target.setHours(16, 0, 0, 0);
+    // One fixed launch moment. Once it has passed the timer never restarts: anyone on or
+    // opening the page afterwards sees the celebration and is then redirected.
+    function getNextLaunch() {
+      const [year, month, day] = LAUNCH_DATE_IST.split("-").map(Number);
+      const istMidnightUtc = Date.UTC(year, month - 1, day) - IST_OFFSET_MINUTES * MINUTE_MS;
+      return new Date(istMidnightUtc + LAUNCH_MINUTES_IST * MINUTE_MS);
+    }
 
-      if (target <= now) {
-        target.setDate(target.getDate() + 1);
-      }
+    function showLaunchTimeForVisitor() {
+      const localTime = new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }).format(endTime);
+      const localZone = new Intl.DateTimeFormat(undefined, { timeZoneName: "short" })
+        .formatToParts(endTime)
+        .find((part) => part.type === "timeZoneName")?.value || "local time";
+      const visitorIsOnIst = new Date().getTimezoneOffset() === -IST_OFFSET_MINUTES;
 
-      return target;
+      statusElement.textContent = visitorIsOnIst
+        ? "Counting down to the website relaunch at 4:00 PM IST."
+        : `Counting down to the website relaunch at 4:00 PM IST (${localTime} ${localZone} your time).`;
     }
 
     function renderCountdown() {
       const remaining = endTime.getTime() - Date.now();
 
       if (remaining <= 0) {
-        clearInterval(countdownInterval);
-        statusElement.textContent = "It’s 4 PM. Opening the new Gritstone website…";
-        window.location.href = redirectUrl;
+        celebrateLaunch();
         return;
       }
 
@@ -237,36 +559,153 @@
       secondsElement.textContent = String(seconds).padStart(2, "0");
     }
 
-    // Auto-refresh every 20 minutes, anchored so the last refresh of the day is 4:50 PM.
-    // Counting back from 16:50 in 20-minute steps gives :10, :30 and :50 of every hour,
-    // from 00:10 through 16:50. No refreshes happen between 16:50 and 00:10.
+    // ---- Launch celebration ----------------------------------------------------------
+    // Zeroes the timer, fades the panel out, shows a check mark + "We're live!" and fires
+    // confetti in brand colours for a few seconds, then redirects to the new site.
+    const CELEBRATION_MS = 4200;
+    let launched = false;
+
+    function celebrateLaunch() {
+      if (launched) return;
+      launched = true;
+      clearInterval(countdownInterval);
+
+      hoursElement.textContent = "00";
+      minutesElement.textContent = "00";
+      secondsElement.textContent = "00";
+      statusElement.textContent = "We’re live! Opening the new Gritstone website…";
+
+      const celebration = document.getElementById("celebration");
+      celebration.removeAttribute("aria-hidden");
+      document.body.classList.add("launched");
+
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!reduceMotion) runConfetti(CELEBRATION_MS - 600);
+
+      if (!demoMode) {
+        setTimeout(() => { window.location.href = redirectUrl; }, reduceMotion ? 2500 : CELEBRATION_MS);
+      }
+    }
+
+    function runConfetti(durationMs) {
+      const canvas = document.getElementById("confetti-canvas");
+      const ctx = canvas.getContext("2d");
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const colors = ["#b20d24", "#e3364d", "#f28a99", "#242326", "#ffc857", "#ffffff"];
+      const rand = (min, max) => min + Math.random() * (max - min);
+      const power = Math.min(1.4, Math.max(0.7, height / 800));
+      const pieces = [];
+
+      function burst(x, y, angleCenter, spread, count, speedMax) {
+        for (let i = 0; i < count; i++) {
+          const angle = angleCenter + rand(-spread, spread);
+          const speed = rand(0.55, 1) * speedMax * power;
+          pieces.push({
+            x, y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            w: rand(6, 12), h: rand(8, 16),
+            rot: rand(0, Math.PI * 2), vrot: rand(-12, 12),
+            tilt: rand(0, Math.PI * 2), vtilt: rand(4, 10),
+            color: colors[Math.floor(Math.random() * colors.length)],
+            round: Math.random() < 0.3,
+          });
+        }
+      }
+
+      // Two cannons from the bottom corners plus a centre pop, then a second volley.
+      burst(0, height, -Math.PI / 3, 0.35, 90, 1500);
+      burst(width, height, -2 * Math.PI / 3, 0.35, 90, 1500);
+      burst(width / 2, height * 0.45, -Math.PI / 2, Math.PI, 70, 900);
+      setTimeout(() => {
+        burst(width * 0.2, height, -Math.PI / 2.4, 0.3, 50, 1300);
+        burst(width * 0.8, height, -Math.PI / 1.7, 0.3, 50, 1300);
+      }, 650);
+
+      const GRAVITY = 420;
+      const DRAG = 2.6;
+      const start = performance.now();
+      let last = start;
+
+      function frame(now) {
+        const dt = Math.min((now - last) / 1000, 0.05);
+        last = now;
+        const elapsed = now - start;
+        const fade = Math.max(0, Math.min(1, (durationMs - elapsed) / 600));
+
+        ctx.clearRect(0, 0, width, height);
+        for (const p of pieces) {
+          p.vx -= p.vx * DRAG * dt;
+          p.vy += (GRAVITY - p.vy * DRAG) * dt;
+          p.x += (p.vx + Math.sin(p.tilt) * 40) * dt;
+          p.y += p.vy * dt;
+          p.rot += p.vrot * dt;
+          p.tilt += p.vtilt * dt;
+
+          ctx.save();
+          ctx.globalAlpha = fade;
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.scale(1, Math.cos(p.tilt)); // flutter
+          ctx.fillStyle = p.color;
+          const outlined = p.color === "#ffffff";
+          if (outlined) {
+            ctx.strokeStyle = "rgba(178, 13, 36, 0.35)";
+            ctx.lineWidth = 1;
+          }
+          if (p.round) {
+            ctx.beginPath();
+            ctx.arc(0, 0, p.w / 2, 0, Math.PI * 2);
+            ctx.fill();
+            if (outlined) ctx.stroke();
+          } else {
+            ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+            if (outlined) ctx.strokeRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          }
+          ctx.restore();
+        }
+
+        if (elapsed < durationMs) {
+          requestAnimationFrame(frame);
+        } else {
+          ctx.clearRect(0, 0, width, height);
+        }
+      }
+
+      requestAnimationFrame(frame);
+    }
+
+    // Auto-refresh every 20 minutes on the IST clock, anchored so the last refresh of the day
+    // is 4:50 PM IST. Counting back from 16:50 in 20-minute steps gives :10, :30 and :50 of
+    // every hour, from 00:10 through 16:50 IST. No refreshes between 16:50 and 00:10 IST.
     const REFRESH_STEP_MINUTES = 20;
-    const LAST_REFRESH_MINUTES = 16 * 60 + 50; // 4:50 PM
+    const LAST_REFRESH_MINUTES = 16 * 60 + 50; // 4:50 PM IST
     const nextRefreshTime = getNextRefreshTime();
 
     function getNextRefreshTime() {
-      const now = new Date();
-      const nowMinutes = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60 + now.getMilliseconds() / 60000;
+      const now = Date.now();
+      const { minutes: nowMinutes, midnightUtc } = istClock(now);
       const firstRefreshMinutes = LAST_REFRESH_MINUTES % REFRESH_STEP_MINUTES; // 00:10
 
-      const target = new Date(now);
-      target.setSeconds(0, 0);
-
       if (nowMinutes >= LAST_REFRESH_MINUTES) {
-        // Past today's last refresh: wait for the first slot tomorrow.
-        target.setDate(target.getDate() + 1);
-        target.setHours(0, firstRefreshMinutes);
-        return target;
+        // Past today's last refresh: wait for the first slot tomorrow (IST).
+        return new Date(midnightUtc + (DAY_MINUTES + firstRefreshMinutes) * MINUTE_MS);
       }
 
       const stepsBack = Math.floor((LAST_REFRESH_MINUTES - nowMinutes) / REFRESH_STEP_MINUTES);
       const slotMinutes = LAST_REFRESH_MINUTES - stepsBack * REFRESH_STEP_MINUTES;
-      target.setHours(Math.floor(slotMinutes / 60), slotMinutes % 60);
-      return target;
+      return new Date(midnightUtc + slotMinutes * MINUTE_MS);
     }
 
     function updateCountdown() {
-      if (Date.now() >= nextRefreshTime.getTime()) {
+      if (launched) return;
+      if (!demoMode && Date.now() >= nextRefreshTime.getTime()) {
         clearInterval(countdownInterval);
         window.location.reload();
         return;
@@ -274,6 +713,7 @@
       renderCountdown();
     }
 
+    showLaunchTimeForVisitor();
     const countdownInterval = setInterval(updateCountdown, 250);
     updateCountdown();
   </script>
