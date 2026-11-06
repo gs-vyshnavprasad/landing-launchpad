@@ -494,14 +494,17 @@
       reduceMotion.addEventListener?.("change", start);
     })();
 
-    const redirectUrl = "https://gritstonetech.com/";
+    // Local testing: on localhost the page goes live 15 seconds after load and redirects
+    // to the QA site instead of production.
+    const isLocalhost = ["localhost", "127.0.0.1", "::1", "[::1]"].includes(window.location.hostname);
+    const LOCAL_LAUNCH_DELAY_MS = 15000;
+    const redirectUrl = isLocalhost ? "https://qa.gritstonetech.com/" : "https://gritstonetech.com/";
 
     // The relaunch happens at 4:00 PM India Standard Time (UTC+5:30, no daylight saving),
     // the same instant for every visitor. All schedule math is done on the IST clock.
     const IST_OFFSET_MINUTES = 5 * 60 + 30;
     const LAUNCH_DATE_IST = "2026-11-06"; // YYYY-MM-DD, India date of the relaunch
-    const LAUNCH_MINUTES_IST = 14 * 60 
-      // + 35;
+    const LAUNCH_MINUTES_IST = 16 * 60;
     const MINUTE_MS = 60000;
     const DAY_MINUTES = 24 * 60;
 
@@ -514,7 +517,9 @@
 
     // Add ?demo to the URL to preview the finish: a 10-second countdown, no redirect.
     const demoMode = new URLSearchParams(window.location.search).has("demo");
-    const endTime = demoMode ? new Date(Date.now() + 10000) : getNextLaunch();
+    const endTime = demoMode ? new Date(Date.now() + 10000)
+      : isLocalhost ? new Date(Date.now() + LOCAL_LAUNCH_DELAY_MS)
+      : getNextLaunch();
 
     const hoursElement = document.getElementById("hours");
     const minutesElement = document.getElementById("minutes");
