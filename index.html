@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>Countdown to 3 PM | Gritstone Technologies</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #fff;
+      color: #242326;
+      --gritstone-red: #b20d24;
+      --text-muted: #777579;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+    }
+
+    .top-accent {
+      height: 7px;
+      background: var(--gritstone-red);
+    }
+
+    header {
+      width: min(100% - 48px, 1240px);
+      height: 94px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #242326;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      width: 35px;
+      height: 35px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--gritstone-red);
+      color: #fff;
+      font-size: 19px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .brand-name {
+      font-size: 1.24rem;
+      font-weight: 800;
+      letter-spacing: 0.075em;
+    }
+
+    .brand-name span {
+      color: var(--gritstone-red);
+    }
+
+    main {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 44px 24px 80px;
+    }
+
+    .countdown-panel {
+      width: min(100%, 840px);
+      padding: clamp(28px, 6vw, 68px);
+      text-align: center;
+      border: 1px solid #eeedef;
+      border-radius: 4px;
+      background: #fff;
+      box-shadow: 0 18px 56px rgb(27 24 26 / 6%);
+    }
+
+    .eyebrow {
+      margin: 0 0 18px;
+      color: var(--gritstone-red);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.7rem, 8vw, 5.2rem);
+      font-weight: 500;
+      letter-spacing: -0.065em;
+      line-height: 1.04;
+    }
+
+    h1 span {
+      color: var(--gritstone-red);
+    }
+
+    .description {
+      max-width: 470px;
+      margin: 20px auto 42px;
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    .timer {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: clamp(8px, 2vw, 18px);
+    }
+
+    .time-unit {
+      padding: 22px 8px 18px;
+      border: 1px solid #eeedef;
+      border-top: 3px solid var(--gritstone-red);
+      background: #fcfbfb;
+    }
+
+    .value {
+      display: block;
+      font-variant-numeric: tabular-nums;
+      font-size: clamp(2rem, 7vw, 3.5rem);
+      font-weight: 600;
+      letter-spacing: -0.04em;
+    }
+
+    .label {
+      display: block;
+      margin-top: 8px;
+      color: var(--text-muted);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .status {
+      min-height: 1.5em;
+      margin: 28px 0 0;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+    }
+
+    footer {
+      padding: 18px 24px 26px;
+      color: #929095;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      text-align: center;
+    }
+
+    @media (max-width: 420px) {
+      header {
+        height: 78px;
+      }
+
+      .brand-name {
+        font-size: 1.05rem;
+      }
+
+      .countdown-panel {
+        padding: 34px 18px;
+      }
+
+      .time-unit {
+        padding: 17px 4px 14px;
+      }
+
+      .label {
+        font-size: 0.58rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-accent" aria-hidden="true"></div>
+  <header>
+    <a class="brand" href="https://gritstone.com/" aria-label="Gritstone Technologies home">
+      <span class="brand-mark" aria-hidden="true">G</span>
+      <span class="brand-name">GRITSTONE<span>.</span></span>
+    </a>
+  </header>
+  <main>
+    <section class="countdown-panel" aria-labelledby="countdown-heading">
+      <p class="eyebrow">Valuing every moment</p>
+      <h1 id="countdown-heading">See you at <span>3 PM</span></h1>
+      <p class="description">A little time left until we take you to Gritstone Technologies.</p>
+
+      <div class="timer" aria-label="Time remaining until 3 PM">
+        <div class="time-unit"><span class="value" id="hours">00</span><span class="label">Hours</span></div>
+        <div class="time-unit"><span class="value" id="minutes">00</span><span class="label">Minutes</span></div>
+        <div class="time-unit"><span class="value" id="seconds">00</span><span class="label">Seconds</span></div>
+        <div class="time-unit"><span class="value" id="milliseconds">000</span><span class="label">Milliseconds</span></div>
+      </div>
+      <p class="status" id="status" role="status">Counting down to 3:00 PM local time.</p>
+    </section>
+  </main>
+  <footer>Gritstone Technologies</footer>
+
+  <script>
+    const redirectUrl = "https://gritstone.com/";
+    const endTime = getNextThreePm();
+
+    const hoursElement = document.getElementById("hours");
+    const minutesElement = document.getElementById("minutes");
+    const secondsElement = document.getElementById("seconds");
+    const millisecondsElement = document.getElementById("milliseconds");
+    const statusElement = document.getElementById("status");
+
+    function getNextThreePm() {
+      const now = new Date();
+      const target = new Date(now);
+      target.setHours(15, 0, 0, 0);
+
+      if (target <= now) {
+        target.setDate(target.getDate() + 1);
+      }
+
+      return target;
+    }
+
+    function renderCountdown() {
+      const remaining = endTime.getTime() - Date.now();
+
+      if (remaining <= 0) {
+        clearInterval(countdownInterval);
+        statusElement.textContent = "It’s 3 PM. Opening Gritstone…";
+        window.location.href = redirectUrl;
+        return;
+      }
+
+      const totalSeconds = Math.floor(remaining / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      const milliseconds = remaining % 1000;
+
+      hoursElement.textContent = String(hours).padStart(2, "0");
+      minutesElement.textContent = String(minutes).padStart(2, "0");
+      secondsElement.textContent = String(seconds).padStart(2, "0");
+      millisecondsElement.textContent = String(milliseconds).padStart(3, "0");
+    }
+
+    // Auto-refresh every 20 minutes, anchored so the last refresh of the day is 3:50 PM.
+    // Counting back from 15:50 in 20-minute steps gives :10, :30 and :50 of every hour,
+    // from 00:10 through 15:50. No refreshes happen between 15:50 and 00:10.
+    const REFRESH_STEP_MINUTES = 20;
+    const LAST_REFRESH_MINUTES = 15 * 60 + 50; // 3:50 PM
+    const nextRefreshTime = getNextRefreshTime();
+
+    function getNextRefreshTime() {
+      const now = new Date();
+      const nowMinutes = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60 + now.getMilliseconds() / 60000;
+      const firstRefreshMinutes = LAST_REFRESH_MINUTES % REFRESH_STEP_MINUTES; // 00:10
+
+      const target = new Date(now);
+      target.setSeconds(0, 0);
+
+      if (nowMinutes >= LAST_REFRESH_MINUTES) {
+        // Past today's last refresh: wait for the first slot tomorrow.
+        target.setDate(target.getDate() + 1);
+        target.setHours(0, firstRefreshMinutes);
+        return target;
+      }
+
+      const stepsBack = Math.floor((LAST_REFRESH_MINUTES - nowMinutes) / REFRESH_STEP_MINUTES);
+      const slotMinutes = LAST_REFRESH_MINUTES - stepsBack * REFRESH_STEP_MINUTES;
+      target.setHours(Math.floor(slotMinutes / 60), slotMinutes % 60);
+      return target;
+    }
+
+    function updateCountdown() {
+      if (Date.now() >= nextRefreshTime.getTime()) {
+        clearInterval(countdownInterval);
+        window.location.reload();
+        return;
+      }
+      renderCountdown();
+    }
+
+    const countdownInterval = setInterval(updateCountdown, 37);
+    updateCountdown();
+  </script>
+</body>
+</html>
