@@ -304,9 +304,124 @@
       to { opacity: 1; transform: none; }
     }
 
+    /* ---- New site reveal --------------------------------------------------------- */
+    /* The new landing page is preloaded in a hidden iframe (opacity 0). At launch the
+       countdown page scrolls up out of view while the iframe fades in. */
+    .site-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      background: #fff;
+      transition: opacity 1200ms ease;
+    }
+
+    .site-layer iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    body.revealing .site-layer {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    body > :not(.site-layer):not(.load-progress) {
+      transition: transform 1200ms cubic-bezier(.65, 0, .35, 1);
+    }
+
+    body.revealing > :not(.site-layer):not(.load-progress) {
+      transform: translateY(-100vh);
+    }
+
+    /* 3-second progress bar shown while the iframe is hard-refreshed. */
+    .load-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 11;
+      height: 4px;
+      background: rgb(178 13 36 / 15%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 300ms ease;
+    }
+
+    .load-progress span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--gritstone-red);
+    }
+
+    body.reloading .load-progress {
+      opacity: 1;
+    }
+
+    /* Rounded URL pill pinned to the bottom of the loaded site. */
+    .site-url {
+      position: absolute;
+      left: 50%;
+      bottom: clamp(16px, 4vh, 32px);
+      z-index: 1;
+      max-width: calc(100% - 32px);
+      padding: 10px 22px;
+      border: 1px solid rgb(178 13 36 / 22%);
+      border-radius: 999px;
+      background: rgb(255 255 255 / 92%);
+      box-shadow: 0 8px 28px rgb(27 24 26 / 14%);
+      backdrop-filter: blur(8px);
+      color: var(--gritstone-red);
+      font-size: clamp(0.85rem, 2vh, 1rem);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transform: translate(-50%, 12px);
+      opacity: 0;
+      transition: opacity 500ms ease 900ms, transform 500ms cubic-bezier(.2, .8, .2, 1) 900ms;
+    }
+
+    body.revealing .site-url {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    /* 40% white veil over the last loaded preview while the hard refresh runs. */
+    .site-layer::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgb(255 255 255 / 40%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 300ms ease;
+    }
+
+    body.reloading .site-layer::after {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    body.reloading .load-progress span {
+      animation: progress-fill 3000ms linear forwards;
+    }
+
+    @keyframes progress-fill {
+      to { width: 100%; }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .countdown-panel,
-      .celebration {
+      .celebration,
+      .site-layer,
+      body > :not(.site-layer):not(.load-progress) {
         transition: none;
       }
 
@@ -332,7 +447,7 @@
         </a>
       </header>
       <p class="eyebrow">gritstonetech.com</p>
-      <h1 id="countdown-heading">Relaunch in</h1>
+      <h1 id="countdown-heading">Relaunching in</h1>
       <div class="timer" aria-label="Time remaining until the website relaunch">
         <div class="time-unit"><span class="value" id="hours">00</span><span class="label">Hours</span></div>
         <div class="time-unit"><span class="value" id="minutes">00</span><span class="label">Minutes</span></div>
@@ -354,6 +469,12 @@
       <p class="celebration-sub">Taking you to gritstonetech.com…</p>
     </div>
   </div>
+
+  <div class="site-layer" id="site-layer" aria-hidden="true">
+    <iframe id="site-frame" title="Gritstone Technologies website"></iframe>
+    <a class="site-url" id="site-url" target="_top"></a>
+  </div>
+  <div class="load-progress" id="load-progress" aria-hidden="true"><span></span></div>
 
   <script>
     // ---- Live background animation -------------------------------------------------
@@ -515,7 +636,7 @@
       return { minutes: msIntoDay / MINUTE_MS, midnightUtc: timestamp - msIntoDay };
     }
 
-    // Add ?demo to the URL to preview the finish: a 10-second countdown, no redirect.
+    // Add ?demo to the URL to preview the finish: a 10-second countdown.
     const demoMode = new URLSearchParams(window.location.search).has("demo");
     const endTime = demoMode ? new Date(Date.now() + 10000)
       : isLocalhost ? new Date(Date.now() + LOCAL_LAUNCH_DELAY_MS)
@@ -587,9 +708,39 @@
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (!reduceMotion) runConfetti(CELEBRATION_MS - 600);
 
-      if (!demoMode) {
-        setTimeout(() => { window.location.href = redirectUrl; }, reduceMotion ? 2500 : CELEBRATION_MS);
-      }
+      setTimeout(revealNewSite, reduceMotion ? 2500 : CELEBRATION_MS);
+    }
+
+    // ---- New site reveal ---------------------------------------------------------------
+    // No redirect: the new landing page is preloaded in a hidden iframe. At launch the
+    // countdown page scrolls up while the iframe fades in, then the iframe is hard-refreshed
+    // (cache-busted URL) behind a 3-second progress bar so visitors see the freshest build.
+    const REVEAL_MS = 1200;
+    const RELOAD_PROGRESS_MS = 3000;
+    const siteLayer = document.getElementById("site-layer");
+    const siteFrame = document.getElementById("site-frame");
+    siteFrame.src = redirectUrl;
+
+    const siteUrl = document.getElementById("site-url");
+    siteUrl.href = redirectUrl;
+    siteUrl.textContent = new URL(redirectUrl).hostname;
+
+    function cacheBustedUrl() {
+      const url = new URL(redirectUrl);
+      url.searchParams.set("_", Date.now());
+      return url.toString();
+    }
+
+    function revealNewSite() {
+      siteLayer.removeAttribute("aria-hidden");
+      document.body.classList.add("revealing");
+
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      setTimeout(() => {
+        document.body.classList.add("reloading");
+        siteFrame.src = cacheBustedUrl();
+        setTimeout(() => document.body.classList.remove("reloading"), RELOAD_PROGRESS_MS);
+      }, reduceMotion ? 0 : REVEAL_MS);
     }
 
     function runConfetti(durationMs) {
