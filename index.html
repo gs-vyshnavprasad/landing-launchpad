@@ -4,11 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffffff">
-  <title>Countdown to 4 PM | Gritstone Technologies</title>
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
+  <title>Website Relaunch at 4 PM | Gritstone Technologies</title>
   <style>
     :root {
       color-scheme: light;
-      font-family: "Segoe UI", Arial, sans-serif;
+      font-family: "Montserrat", "Segoe UI", Arial, sans-serif;
       background: #fff;
       color: #242326;
       --gritstone-red: #b20d24;
@@ -48,27 +52,10 @@
       text-decoration: none;
     }
 
-    .brand-mark {
-      width: 35px;
-      height: 35px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background: var(--gritstone-red);
-      color: #fff;
-      font-size: 19px;
-      font-weight: 800;
-      line-height: 1;
-    }
-
-    .brand-name {
-      font-size: 1.24rem;
-      font-weight: 800;
-      letter-spacing: 0.075em;
-    }
-
-    .brand-name span {
-      color: var(--gritstone-red);
+    .brand-logo {
+      display: block;
+      width: 180px;
+      height: auto;
     }
 
     main {
@@ -119,7 +106,7 @@
 
     .timer {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: clamp(8px, 2vw, 18px);
     }
 
@@ -168,8 +155,8 @@
         height: 78px;
       }
 
-      .brand-name {
-        font-size: 1.05rem;
+      .brand-logo {
+        width: 150px;
       }
 
       .countdown-panel {
@@ -190,23 +177,21 @@
   <div class="top-accent" aria-hidden="true"></div>
   <header>
     <a class="brand" href="https://gritstone.com/" aria-label="Gritstone Technologies home">
-      <span class="brand-mark" aria-hidden="true">G</span>
-      <span class="brand-name">GRITSTONE<span>.</span></span>
+      <img class="brand-logo" src="assets/gritstone-logo.svg" alt="Gritstone Technologies" width="234" height="40">
     </a>
   </header>
   <main>
     <section class="countdown-panel" aria-labelledby="countdown-heading">
-      <p class="eyebrow">Valuing every moment</p>
-      <h1 id="countdown-heading">See you at <span>4 PM</span></h1>
-      <p class="description">A little time left until we take you to Gritstone Technologies.</p>
+      <p class="eyebrow">Website relaunch</p>
+      <h1 id="countdown-heading">Our new website launches at <span>4 PM</span></h1>
+      <p class="description">We're relaunching the Gritstone Technologies website. The countdown is on until the new site goes live.</p>
 
-      <div class="timer" aria-label="Time remaining until 4 PM">
+      <div class="timer" aria-label="Time remaining until the website relaunch at 4 PM">
         <div class="time-unit"><span class="value" id="hours">00</span><span class="label">Hours</span></div>
         <div class="time-unit"><span class="value" id="minutes">00</span><span class="label">Minutes</span></div>
         <div class="time-unit"><span class="value" id="seconds">00</span><span class="label">Seconds</span></div>
-        <div class="time-unit"><span class="value" id="milliseconds">0</span><span class="label">Milliseconds</span></div>
       </div>
-      <p class="status" id="status" role="status">Counting down to 4:00 PM local time.</p>
+      <p class="status" id="status" role="status">Counting down to the website relaunch at 4:00 PM local time.</p>
     </section>
   </main>
   <footer>Gritstone Technologies</footer>
@@ -218,7 +203,6 @@
     const hoursElement = document.getElementById("hours");
     const minutesElement = document.getElementById("minutes");
     const secondsElement = document.getElementById("seconds");
-    const millisecondsElement = document.getElementById("milliseconds");
     const statusElement = document.getElementById("status");
 
     function getNextFourPm() {
@@ -238,7 +222,7 @@
 
       if (remaining <= 0) {
         clearInterval(countdownInterval);
-        statusElement.textContent = "It’s 4 PM. Opening Gritstone…";
+        statusElement.textContent = "It’s 4 PM. Opening the new Gritstone website…";
         window.location.href = redirectUrl;
         return;
       }
@@ -247,12 +231,10 @@
       const hours = Math.floor(totalSeconds / 3600);
       const minutes = Math.floor((totalSeconds % 3600) / 60);
       const seconds = totalSeconds % 60;
-      const milliseconds = remaining % 1000;
 
       hoursElement.textContent = String(hours).padStart(2, "0");
       minutesElement.textContent = String(minutes).padStart(2, "0");
       secondsElement.textContent = String(seconds).padStart(2, "0");
-      millisecondsElement.textContent = String(Math.floor(milliseconds / 100));
     }
 
     // Auto-refresh every 20 minutes, anchored so the last refresh of the day is 4:50 PM.
@@ -292,7 +274,7 @@
       renderCountdown();
     }
 
-    const countdownInterval = setInterval(updateCountdown, 37);
+    const countdownInterval = setInterval(updateCountdown, 250);
     updateCountdown();
   </script>
 </body>
