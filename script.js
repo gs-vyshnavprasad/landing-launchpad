@@ -134,6 +134,7 @@ setupForm.addEventListener("submit", (event) => {
   if (!saved) return void (setupError.textContent = "Couldn’t save settings: browser storage is blocked.");
 
   // Reload so the countdown, iframe and branding all start fresh from the new settings.
+  try { sessionStorage.setItem("webtimer.showEditTip", "1"); } catch {}
   window.location.reload();
 });
 
@@ -580,3 +581,18 @@ if (storedConfig && storedConfig.launchAt) {
   document.body.classList.add("first-run");
   openSetup();
 }
+
+// ---- Edit button tip ------------------------------------------------------------------
+// After settings are saved, point out the (faint) edit button for five seconds.
+(function showEditTip() {
+  let pending = false;
+  try {
+    pending = sessionStorage.getItem("webtimer.showEditTip") === "1";
+    sessionStorage.removeItem("webtimer.showEditTip");
+  } catch {}
+  if (!pending) return;
+  const tip = document.getElementById("edit-tip");
+  requestAnimationFrame(() => document.body.classList.add("edit-tip-visible"));
+  setTimeout(() => document.body.classList.remove("edit-tip-visible"), 5000);
+  tip.addEventListener("click", () => document.body.classList.remove("edit-tip-visible"));
+})();

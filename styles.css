@@ -344,11 +344,11 @@ body.revealing .site-layer {
   pointer-events: auto;
 }
 
-body > :not(.site-layer):not(.load-progress):not(.edit-button):not(.setup) {
+body > :not(.site-layer):not(.load-progress):not(.edit-button):not(.edit-tip):not(.setup) {
   transition: transform 1200ms cubic-bezier(.65, 0, .35, 1);
 }
 
-body.revealing > :not(.site-layer):not(.load-progress):not(.edit-button):not(.setup) {
+body.revealing > :not(.site-layer):not(.load-progress):not(.edit-button):not(.edit-tip):not(.setup) {
   transform: translateY(-100vh);
 }
 
@@ -643,7 +643,7 @@ body.setup-open .edit-button {
   .countdown-panel,
   .celebration,
   .site-layer,
-  body > :not(.site-layer):not(.load-progress):not(.edit-button):not(.setup) {
+  body > :not(.site-layer):not(.load-progress):not(.edit-button):not(.edit-tip):not(.setup) {
     transition: none;
   }
 
@@ -661,3 +661,46 @@ body.setup-open .edit-button {
   display: inline-block;
   transform: scaleX(-1);
 }
+
+/* Tip bubble pointing at the edit button, shown for 5s after settings are saved. */
+.edit-tip {
+  position: fixed;
+  right: 16px;
+  bottom: 68px;
+  z-index: 26;
+  max-width: min(260px, calc(100% - 32px));
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #242326;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.4;
+  box-shadow: 0 10px 30px rgb(27 24 26 / 25%);
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+
+.edit-tip::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  bottom: -6px;
+  width: 12px;
+  height: 12px;
+  background: inherit;
+  transform: rotate(45deg);
+}
+
+body.edit-tip-visible .edit-tip {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+body.edit-tip-visible .edit-button {
+  opacity: 1;
+}
+
