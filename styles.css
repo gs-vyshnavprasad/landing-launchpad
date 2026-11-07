@@ -1,0 +1,663 @@
+:root {
+  color-scheme: light;
+  font-family: "Montserrat", "Segoe UI", Arial, sans-serif;
+  background: #fff;
+  color: #242326;
+  --gritstone-red: #b20d24;
+  --accent-rgb: 178 13 36;
+  --text-muted: #777579;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  /* Logo + panel are centred together as one group within the viewport. */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(16px, 5vh, 48px);
+  padding: clamp(20px, 4vh, 40px) 16px;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* Live background: drifting glows + wandering particles, drawn on a canvas behind everything. */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+}
+
+.top-accent {
+  z-index: 2;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 7px;
+  background: var(--gritstone-red);
+}
+
+header {
+  margin-bottom: clamp(14px, 3.5vh, 32px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(6px, 1.4vh, 12px);
+}
+
+.brand-subheading {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: clamp(0.8rem, 2vh, 1.05rem);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  color: #242326;
+  text-decoration: none;
+}
+
+.brand-logo {
+  display: block;
+  width: clamp(170px, min(24vw, 28vh), 270px);
+  height: auto;
+  /* Scraped logos/icons may be square: cap the height and keep the aspect ratio. */
+  max-height: clamp(48px, 12vh, 110px);
+  object-fit: contain;
+}
+
+main {
+  flex: 0 1 auto;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+}
+
+.countdown-panel {
+  width: min(100%, max(840px, 58vw), 1120px);
+  max-height: 100%;
+  padding: clamp(18px, min(6vw, 6vh), 56px) clamp(16px, 5vw, 64px) clamp(14px, 3vh, 28px);
+  text-align: center;
+  border: 1px solid #eeedef;
+  border-radius: 12px;
+  background: rgb(255 255 255 / 40%);
+  box-shadow: 0 18px 56px rgb(27 24 26 / 6%);
+}
+
+.eyebrow {
+  margin: 0 0 clamp(8px, 2vh, 18px);
+  color: var(--gritstone-red);
+  display: inline-block;
+  padding: clamp(5px, 1vh, 8px) clamp(14px, 2.4vh, 22px);
+  border: 1px solid rgb(var(--accent-rgb) / 22%);
+  border-radius: 999px;
+  background: rgb(var(--accent-rgb) / 6%);
+  font-size: clamp(0.9rem, 2.2vh, 1.15rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+h1 {
+  margin: 0 0 clamp(16px, 5vh, 44px);
+  font-size: clamp(2rem, min(8vw, 10vh), 6.6rem);
+  font-weight: 500;
+  letter-spacing: -0.065em;
+  line-height: 1.04;
+}
+
+h1 span {
+  color: var(--gritstone-red);
+}
+
+.timer {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(8px, 2vw, 18px);
+}
+
+.time-unit {
+  padding: clamp(10px, 2.6vh, 24px) 6px clamp(8px, 2.2vh, 20px);
+  border: 1px solid #eeedef;
+  border-top: 3px solid var(--gritstone-red);
+  background: #fcfbfb;
+}
+
+.value {
+  display: block;
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(1.8rem, min(9vw, 10vh), 5.6rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.label {
+  display: block;
+  margin-top: clamp(4px, 1vh, 8px);
+  color: var(--text-muted);
+  font-size: clamp(0.58rem, 1.4vh, 0.72rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.status {
+  margin: clamp(12px, 3.5vh, 30px) 0 0;
+  color: var(--text-muted);
+  font-size: clamp(0.74rem, 1.8vh, 0.9rem);
+  line-height: 1.5;
+}
+
+@media (max-width: 420px) {
+  .label {
+    letter-spacing: 0.08em;
+  }
+}
+
+/* ---- Launch celebration ---------------------------------------------------- */
+#confetti-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.countdown-panel {
+  transition: transform 600ms cubic-bezier(.2, .8, .2, 1), opacity 500ms ease, filter 500ms ease;
+}
+
+body.launched .countdown-panel {
+  transform: scale(0.94);
+  opacity: 0;
+  filter: blur(6px);
+}
+
+.celebration {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 400ms ease 250ms, visibility 0s linear 650ms;
+}
+
+body.launched .celebration {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 400ms ease 250ms, visibility 0s;
+}
+
+.celebration-check {
+  display: block;
+  width: clamp(84px, 16vh, 132px);
+  height: auto;
+  margin: 0 auto clamp(14px, 3vh, 26px);
+  overflow: visible;
+}
+
+.celebration-check circle {
+  fill: var(--gritstone-red);
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0);
+}
+
+.celebration-check path {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+}
+
+.celebration-check .ring {
+  fill: none;
+  stroke: var(--gritstone-red);
+  stroke-width: 2;
+  opacity: 0;
+  transform: scale(1);
+}
+
+body.launched .celebration-check circle:not(.ring) {
+  animation: pop-in 520ms cubic-bezier(.2, 1.6, .4, 1) 350ms forwards;
+}
+
+body.launched .celebration-check path {
+  animation: draw-check 420ms ease-out 750ms forwards;
+}
+
+body.launched .celebration-check .ring {
+  animation: ring-out 1100ms ease-out 650ms forwards;
+}
+
+.celebration-title {
+  margin: 0;
+  font-size: clamp(2.4rem, min(9vw, 11vh), 6rem);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 1.05;
+}
+
+.celebration-title span {
+  color: var(--gritstone-red);
+}
+
+.celebration-sub {
+  margin: clamp(10px, 2.4vh, 20px) 0 0;
+  color: var(--text-muted);
+  font-size: clamp(0.9rem, 2.2vh, 1.15rem);
+}
+
+body.launched .celebration-title,
+body.launched .celebration-sub {
+  animation: rise-in 600ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+body.launched .celebration-title { animation-delay: 650ms; }
+body.launched .celebration-sub { animation-delay: 850ms; }
+
+@keyframes pop-in {
+  to { transform: scale(1); }
+}
+
+@keyframes draw-check {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes ring-out {
+  0% { opacity: 0.6; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.8); }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- New site reveal --------------------------------------------------------- */
+/* The new landing page is preloaded in a hidden iframe (opacity 0). At launch the
+   countdown page scrolls up out of view while the iframe fades in. */
+.site-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  background: #fff;
+  transition: opacity 1200ms ease;
+}
+
+.site-layer iframe {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  /* Preloaded page stays blurred until the hard refresh finishes, then sharpens gradually. */
+  filter: blur(0.8rem);
+  transition: filter 1500ms ease-out;
+}
+
+body.loaded .site-layer iframe {
+  filter: blur(0);
+}
+
+body.revealing .site-layer {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body > :not(.site-layer):not(.load-progress):not(.edit-button):not(.setup) {
+  transition: transform 1200ms cubic-bezier(.65, 0, .35, 1);
+}
+
+body.revealing > :not(.site-layer):not(.load-progress):not(.edit-button):not(.setup) {
+  transform: translateY(-100vh);
+}
+
+/* 3-second progress bar shown while the iframe is hard-refreshed. */
+.load-progress {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 11;
+  width: min(360px, calc(100% - 32px));
+  height: 6px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgb(var(--accent-rgb) / 15%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+
+.load-progress span {
+  display: block;
+  width: 35%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--gritstone-red);
+}
+
+/* While the iframe loads: a segment sweeps across (no fake percentage). */
+body.reloading .load-progress span {
+  animation: progress-sweep 1100ms cubic-bezier(.45, 0, .55, 1) infinite;
+}
+
+/* On the iframe's load event: fill to 100%, then the bar fades out. */
+body.loaded .load-progress span {
+  animation: none;
+  width: 100%;
+  transition: width 300ms ease-out;
+}
+
+@keyframes progress-sweep {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(290%); }
+}
+
+body.reloading .load-progress {
+  opacity: 1;
+}
+
+/* Rounded URL pill pinned to the bottom of the loaded site. */
+.site-url {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(16px, 4vh, 32px);
+  z-index: 1;
+  max-width: calc(100% - 32px);
+  padding: 10px 22px;
+  border: 1px solid rgb(var(--accent-rgb) / 22%);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 92%);
+  box-shadow: 0 8px 28px rgb(27 24 26 / 14%);
+  backdrop-filter: blur(8px);
+  color: var(--gritstone-red);
+  font-size: clamp(0.85rem, 2vh, 1rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: translate(-50%, 12px);
+  opacity: 0;
+  transition: opacity 500ms ease 900ms, transform 500ms cubic-bezier(.2, .8, .2, 1) 900ms;
+}
+
+body.revealing .site-url {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* 40% white veil over the last loaded preview while the hard refresh runs. */
+.site-layer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgb(255 255 255 / 60%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+
+body.reloading .site-layer::after {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ---- Setup dialog + edit button ------------------------------------------------- */
+.setup {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: none;
+  place-items: center;
+  padding: 16px;
+  background: rgb(36 35 38 / 35%);
+  backdrop-filter: blur(4px);
+  overflow-y: auto;
+}
+
+body.setup-open .setup {
+  display: grid;
+}
+
+.setup-card {
+  width: min(100%, 480px);
+  padding: clamp(20px, 4vh, 32px);
+  border-radius: 12px;
+  border-top: 5px solid var(--gritstone-red);
+  background: #fff;
+  box-shadow: 0 24px 64px rgb(27 24 26 / 22%);
+}
+
+.setup-card h2 {
+  margin: 0 0 4px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.setup-card > p {
+  margin: 0 0 20px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.field label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.field input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #dedce0;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.95rem;
+  color: inherit;
+  background: #fff;
+}
+
+.field input:focus {
+  outline: 2px solid rgb(var(--accent-rgb) / 40%);
+  outline-offset: 1px;
+  border-color: var(--gritstone-red);
+}
+
+.field input[type="color"] {
+  height: 44px;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 12px;
+}
+
+.logo-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-input input {
+  min-width: 0;
+}
+
+.logo-preview {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border: 1px solid #eeedef;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.btn-find {
+  flex: none;
+  padding: 10px 14px;
+  border: 1px solid #dedce0;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--gritstone-red);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-find:disabled {
+  opacity: 0.5;
+  cursor: progress;
+}
+
+.setup-divider {
+  margin: 4px 0 18px;
+  border: 0;
+  border-top: 1px solid #eeedef;
+}
+
+.setup-error {
+  min-height: 1.2em;
+  margin: 0 0 10px;
+  color: var(--gritstone-red);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.setup-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.setup-actions button {
+  padding: 11px 22px;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary {
+  border: 0;
+  background: var(--gritstone-red);
+  color: #fff;
+}
+
+.btn-secondary {
+  border: 1px solid #dedce0;
+  background: #fff;
+  color: inherit;
+}
+
+body.first-run .btn-secondary {
+  display: none;
+}
+
+.edit-button {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 25;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid rgb(var(--accent-rgb) / 40%);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--gritstone-red);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 0.2;
+  transition: opacity 200ms ease;
+}
+
+.edit-button:hover,
+.edit-button:focus-visible {
+  opacity: 1;
+}
+
+body.setup-open .edit-button {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .countdown-panel,
+  .celebration,
+  .site-layer,
+  body > :not(.site-layer):not(.load-progress):not(.edit-button):not(.setup) {
+    transition: none;
+  }
+
+  body.launched .celebration-check circle:not(.ring),
+  body.launched .celebration-check path,
+  body.launched .celebration-title,
+  body.launched .celebration-sub {
+    animation: none;
+    transform: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+.edit-icon {
+  display: inline-block;
+  transform: scaleX(-1);
+}
